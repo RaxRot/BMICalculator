@@ -3,7 +3,9 @@ package com.raxrot.bmicalculator
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,11 +22,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -57,7 +61,21 @@ fun BmiCalculatorPage() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = "Bmi Calculator") }
+                    title = {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "Bmi Calculator",
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary // Синий фон
+                    )
                 )
             }
         ) {
@@ -66,7 +84,9 @@ fun BmiCalculatorPage() {
             var bmi = remember { mutableStateOf("") }
             var status = remember { mutableStateOf("") }
 
-           Column(modifier = Modifier.padding(it)) {
+            Column(modifier = Modifier.padding(it)) {
+                Image(painter = painterResource(id = R.drawable.bmi), contentDescription =null,
+                    modifier = Modifier.fillMaxWidth().padding(top = 20.dp))
                 EditNumberTextField(value =weight.value
                     ,label = "Weight (in kg)", keyBoardOptions =KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
@@ -74,28 +94,28 @@ fun BmiCalculatorPage() {
                     ) ,
                     onValueChanged ={weight.value=it} )
 
-               EditNumberTextField(value =height.value
-                   ,label = "Height (in meters)", keyBoardOptions =KeyboardOptions.Default.copy(
-                       keyboardType = KeyboardType.Number,
-                       imeAction = ImeAction.Done
-                   ) ,
-                   onValueChanged ={height.value=it} )
+                EditNumberTextField(value =height.value
+                    ,label = "Height (in meters)", keyBoardOptions =KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ) ,
+                    onValueChanged ={height.value=it} )
 
-               Button(modifier = Modifier
-                   .align(Alignment.CenterHorizontally)
-                   .padding(top = 30.dp)
-                   .height(60.dp)
-                   .width(200.dp),
-                   onClick = {
-                       bmi.value = calculateBmi(weight = weight.value.toDoubleOrNull() ?: 0.0,
-                           height = height.value.toDoubleOrNull() ?: 0.0)
-                       status.value = getStatus(bmi.value.toDoubleOrNull() ?: 0.0)
-                   }) {
+                Button(modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 30.dp)
+                    .height(60.dp)
+                    .width(200.dp),
+                    onClick = {
+                        bmi.value = calculateBmi(weight = weight.value.toDoubleOrNull() ?: 0.0,
+                            height = height.value.toDoubleOrNull() ?: 0.0)
+                        status.value = getStatus(bmi.value.toDoubleOrNull() ?: 0.0)
+                    }) {
 
-                   Text(text = "Calculate", fontSize = 25.sp)
-               }
-               BmiResult(bmi = bmi.value, status = status.value)
-           }
+                    Text(text = "Calculate", fontSize = 25.sp)
+                }
+                BmiResult(bmi = bmi.value, status = status.value)
+            }
         }
     }
 }
@@ -155,7 +175,8 @@ fun BmiResult(bmi:String,status:String) {
 
         Row (modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth().background(backgroundColor)){
+            .fillMaxWidth()
+            .background(backgroundColor)){
             Text(text = key, modifier = Modifier.weight(1f),fontWeight=fontWeight)
             Text(text = statusMap[key]!!,fontWeight=fontWeight)
         }
